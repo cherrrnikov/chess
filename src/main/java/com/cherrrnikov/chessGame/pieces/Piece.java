@@ -1,7 +1,7 @@
-package com.cherrrnikov.chessGame;
+package com.cherrrnikov.chessGame.pieces;
 
-
-import javax.swing.text.Position;
+import com.cherrrnikov.chessGame.PieceColor;
+import com.cherrrnikov.chessGame.Position;
 
 public abstract class Piece {
     protected Position position;

@@ -1,6 +1,10 @@
 package com.cherrrnikov.chessGame;
 
 
+import com.cherrrnikov.chessGame.pieces.Pawn;
+import com.cherrrnikov.chessGame.pieces.Piece;
+import com.cherrrnikov.chessGame.pieces.Rook;
+
 public class ChessBoard {
     private Piece[][] board;
 
