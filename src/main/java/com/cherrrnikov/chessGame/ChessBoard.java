@@ -1,9 +1,7 @@
 package com.cherrrnikov.chessGame;
 
 
-import com.cherrrnikov.chessGame.pieces.Pawn;
-import com.cherrrnikov.chessGame.pieces.Piece;
-import com.cherrrnikov.chessGame.pieces.Rook;
+import com.cherrrnikov.chessGame.pieces.*;
 
 public class ChessBoard {
     private Piece[][] board;
@@ -53,6 +51,21 @@ public class ChessBoard {
             board[end.getRow()][end.getColumn()].setPosition(end);
             // Clear the start position
             board[start.getRow()][start.getColumn()] = null;
+        }
+    }
+
+    public Piece[][] getBoard() {
+        return board;
+    }
+
+    public Piece getPiece(int row, int column) {
+        return board[row][column];
+    }
+
+    public void setPiece(int row, int column, Piece piece) {
+        board[row][column] = piece;
+        if (piece != null) {
+            piece.setPosition(new Position(row, column));
         }
     }
 }
