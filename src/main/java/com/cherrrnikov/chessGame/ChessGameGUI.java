@@ -8,6 +8,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 public class ChessGameGUI extends JFrame {
     private final ChessSquareComponent[][] squares = new ChessSquareComponent[8][8];
@@ -28,6 +29,7 @@ public class ChessGameGUI extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new GridLayout(8, 8));
         initializeBoard();
+        addGameResetOption();
         pack(); // Adjust window size to fit the chessboard
         setVisible(true);
     }
@@ -70,10 +72,22 @@ public class ChessGameGUI extends JFrame {
     }
 
     private void handleSquareClick(int row, int col) {
-        if (game.handleSquareSelection(row, col)) {
+//        if (game.handleSquareSelection(row, col)) {
+//            refreshBoard();
+//            checkGameState();
+//        }
+        boolean moveResult = game.handleSquareSelection(row, col);
+        clearHighlights();
+        if (moveResult) {
+            // If a move was made, refresh and check game state without highlighting new moves
             refreshBoard();
             checkGameState();
+            checkGameOver();
+        } else if (game.isPieceSelected()) {
+            // If no move was made but a piece is selected, highlight its legal moves
+            highlightLegalMoves(new Position(row, col));
         }
+        refreshBoard();
     }
 
     private void checkGameState() {
@@ -81,6 +95,52 @@ public class ChessGameGUI extends JFrame {
 
         if (game.isInCheck(currentPlayer)) {
             JOptionPane.showMessageDialog(this, currentPlayer + " is in check!");
+        }
+    }
+
+    private void highlightLegalMoves(Position position) {
+        List<Position> legalMoves = game.getLegalMovesForPieceAt(position);
+        for (Position move : legalMoves) {
+            squares[move.getRow()][move.getColumn()].setBackground(Color.GREEN);
+        }
+    }
+
+    private void clearHighlights() {
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                squares[row][col].setBackground((row + col) % 2 == 0 ? Color.LIGHT_GRAY : new Color(205, 133, 63));
+            }
+        }
+    }
+
+    private void addGameResetOption() {
+        JMenuBar menuBar = new JMenuBar();
+        JMenu gameMenu = new JMenu("Game");
+        JMenuItem resetItem = new JMenuItem("Reset");
+        resetItem.addActionListener(e -> resetGame());
+        gameMenu.add(resetItem);
+        menuBar.add(gameMenu);
+        setJMenuBar(menuBar);
+    }
+
+    private void resetGame() {
+        game.resetGame();
+        refreshBoard();
+    }
+
+    private void checkGameOver() {
+        if (game.isCheckmate(game.getCurrentPlayerColor())) {
+            int response = JOptionPane.showConfirmDialog(
+                    this,
+                    "Checkmate! Would you like to play again?",
+                    "Game over",
+                    JOptionPane.YES_NO_OPTION
+                    );
+            if (response == JOptionPane.YES_OPTION) {
+                resetGame();
+            } else {
+                System.exit(0);
+            }
         }
     }
 
